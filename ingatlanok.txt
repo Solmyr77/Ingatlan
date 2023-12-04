@@ -1,9 +1,5 @@
-0	Sajószöged Ady út 12	120	32000000
-1	Tiszaújváros Szent István út 4 2/3	40	15000000
-3	Nagycsécs Szilva utca 7 	140	7000000
-4	Kiscsécs Béke tér 2	75	4300000
-5	Ónod Dózsa György út 17 	100	11000000		
-6	Sajószöged Petőfi út 2  	90	20000000
-7	Miskolc Dankó Pista utca 66	200	14000000
-8	Hejőbába Akác utca 3	310	17000000
-9	Polgár Táncsics utca 41 	110	14000000
+1	Debrecen Ady Út 9	100	22000000
+2	Sonkád Mikszáth Utca 12	120	13000000
+3	Csesznek Dankó Pista Út 15	160	16500000
+4	Nemesrempehollós Petőfi utca 74	130	27500000
+5	Makkoshotyka Veres utca 10	230	19600000

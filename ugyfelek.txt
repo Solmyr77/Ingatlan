@@ -1,0 +1,5 @@
+1	Gipsz Jakab	06123456789
+2	Minta János	06234567890
+3	Minta Katalin	06345678901
+4	Kiss István	06456789012
+5	Jóska Pista	06567890123
