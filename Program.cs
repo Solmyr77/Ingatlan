@@ -24,9 +24,21 @@ namespace Ingatlan
         public string Name { get => name; set => name = value; }
         public string PhoneNumber { get => phoneNumber; set => phoneNumber = value; }
 
-        public override string ToString()
+        public string ToStringFile()
         {
             return $"{this.Id}\t{this.Name}\t{this.PhoneNumber}";
+        }
+
+        public override string ToString()
+        {
+            if (this.Name.Length <= 15)
+            {
+                return $"{this.Id}\t{this.Name}\t\t\t\t\t\t{this.PhoneNumber}";
+            }
+            else
+            {
+                return $"{this.Id}\t{this.Name}\t\t\t\t\t{this.PhoneNumber}";
+            }
         }
     }
 
@@ -52,7 +64,31 @@ namespace Ingatlan
 
         public override string ToString()
         {
-            return $"{this.Id}\t{this.Address}\t\t\t\t{this.Area}\t{this.Price}";
+            if (this.Address.Length <= 7)
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t\t\t\t\t{this.Area}\t{this.Price}";
+            }
+            else if (this.Address.Length <= 14)
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t\t\t\t{this.Area}\t{this.Price}";
+            }
+            else if (this.Address.Length <= 23)
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t\t\t{this.Area}\t{this.Price}";
+            }
+            else if (this.Address.Length <= 31)
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t\t{this.Area}\t{this.Price}";
+            }
+            else if (this.Address.Length <= 47)
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t{this.Area}\t{this.Price}";
+            }
+
+            else
+            {
+                return $"{this.Id}\t{this.Address}\t\t\t\t\t\t\t\t\t{this.Area}\t{this.Price}";
+            }
         }
     }
 
@@ -115,20 +151,25 @@ namespace Ingatlan
                     await sw.WriteAsync(line);
                 }
 
-                Console.WriteLine("Sikeres mentés!");
-                Console.ReadKey();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\nSikeres mentés!");
+                Console.ResetColor();
             }
             catch (IOException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Fájl írási hiba történt: {ex.Message}");
 
                 ShowReturnMessage();
+                Console.ResetColor();
             }
             catch (Exception ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Hiba történt: {ex.Message}");
 
                 ShowReturnMessage();
+                Console.ResetColor();
             }
         }
 
@@ -171,7 +212,9 @@ namespace Ingatlan
 
             foreach (string line in rawProperties)
             {
-                string[] splitLine = line.Split("\t");
+                List<string> splitLine = line.Split("\t").ToList();
+
+                splitLine.RemoveAll(x => x == "");
 
                 properties.Add(new Property(Convert.ToInt32(splitLine[0]), splitLine[1], Convert.ToInt32(splitLine[2]), Convert.ToInt32(splitLine[3])));
             }
@@ -202,6 +245,7 @@ namespace Ingatlan
             List<Person> savedPeople = GetPeopleFromFile();
 
             int id = savedPeople.Last().Id;
+
             string name = GetInput("Adja meg az ügyfél nevét: ");
             string phoneNumber = GetInput("Adja meg az ügyfél telefonszámát: ");
 
@@ -211,10 +255,12 @@ namespace Ingatlan
 
             foreach (Person person in savedPeople)
             {
-                sb.Append(person.ToString() + "\n");
+                sb.Append(person.ToStringFile() + "\n");
             }
 
             await WriteToFileAsync("ugyfelek.txt", sb.ToString());
+            Console.WriteLine("\nNyomjon meg egy gombot a főmenübe lépéshez . . .");
+            Console.ReadKey();
 
             ShowMainMenu();
         }
@@ -250,11 +296,13 @@ namespace Ingatlan
 
             List<Person> savedPeople = GetPeopleFromFile();
 
+            Console.WriteLine("ID\tNév\t\t\t\t\t\t\tTelsz.");
             foreach (Person person in savedPeople)
             {
                 Console.WriteLine(person.ToString());
             }
 
+            Console.WriteLine("\nNyomjon meg egy gombot a főmenübe lépéshez . . .");
             Console.ReadKey();
             ShowMainMenu();
         }
@@ -296,7 +344,7 @@ namespace Ingatlan
 
             List<Property> savedProperties = GetPropertiesFromFile();
 
-            Console.WriteLine("ID\tCím\t\t\t\t\t\tTer.\tÁr");
+            Console.WriteLine("ID\tCím\t\t\t\t\t\t\t\tTer.\tÁr");
 
             foreach (Property property in savedProperties)
             {
@@ -345,10 +393,12 @@ namespace Ingatlan
             {
                 Person person = savedPeople[i];
 
-                Console.WriteLine($"({i+1}) - {person.ToString()}");
+                Console.WriteLine($"({i + 1}) - {person.ToString()}");
             }
 
+            Console.WriteLine();
             int personIndex = Convert.ToInt32(GetInput("Ügyfél: ", hasToBeNumber: true));
+            Console.WriteLine();
 
             Person selectedPerson = savedPeople[personIndex - 1];
 
@@ -359,6 +409,7 @@ namespace Ingatlan
                 Console.WriteLine($"({i + 1}) - {property.ToString()}");
             }
 
+            Console.WriteLine();
             int propertyIndex = Convert.ToInt32(GetInput("Ingatlan: ", hasToBeNumber: true));
 
             Property selectedProperty = savedProperties[propertyIndex - 1];
@@ -368,7 +419,12 @@ namespace Ingatlan
             sb.Append($"{selectedPerson.ToString()}\t\t{DateTime.Today.Year}.{DateTime.Today.Month}.{DateTime.Today.Day}\n");
             sb.Append(selectedProperty.ToString());
 
-            await WriteToFileAsync($"{selectedPerson.Id}_{Convert.ToString(DateTime.Today.Year).Substring(2)}{DateTime.Today.Month}{DateTime.Today.Day}.txt", sb.ToString());
+            string fileName = $"{selectedPerson.Id}_{Convert.ToString(DateTime.Today.Year).Substring(2)}{DateTime.Today.Month}{DateTime.Today.Day}.txt";
+
+            await WriteToFileAsync(fileName, sb.ToString());
+
+            Console.WriteLine("\nNyomjon meg egy gombot a főmenübe lépéshez . . .");
+            Console.ReadKey();
 
             ShowMainMenu();
         }
